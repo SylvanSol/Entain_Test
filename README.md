@@ -8,6 +8,8 @@ This repository is my solution for the Entain Technical Test. The project is str
 
 ## Project Structure
 
+- `api`: A basic REST gateway, forwarding requests onto service(s).
+- `racing`: A very bare-bones racing service.
 ```
 entain/
 ├─ api/                   
