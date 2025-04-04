@@ -58,7 +58,26 @@ entain/
 ### Prerequisites
 
 - [Go (latest version)](https://golang.org/doc/install)
+  Windows
+  ```bash
+  choco install go
+  ```
+  or
+  MacOS / Linux
+  ```bash
+  brew install go
+  ```
+
 - [Protocol Buffers Compiler (protoc)](https://grpc.io/docs/protoc-installation/)
+  Windows
+  ```bash
+  choco install protoc
+  ```
+  or
+  MacOS / Linux
+  ```
+  brew install protobuf 
+  ```
 - Required Go modules and tools:
   ```bash
   nothing here yet
@@ -68,8 +87,8 @@ entain/
 
 1. **Clone the Repository:**
    ```bash
-   git clone https://github.com/yourusername/entain-technical-test.git
-   cd entain-technical-test
+   git clone https://github.com/SylvanSol/Entain_Test.git
+   cd Entain_Test
    ```
 
 ## Testing

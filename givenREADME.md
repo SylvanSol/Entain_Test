@@ -35,10 +35,12 @@ brew install go
 2. Install `protoc`
 
 ```
-brew install protobuf
+brew install protobuf 
 ```
 
 ... or [see here](https://grpc.io/docs/protoc-installation/).
+
+I used Choco instead*
 
 2. In a terminal window, start our racing service...
 
