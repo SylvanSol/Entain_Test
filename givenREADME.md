@@ -53,7 +53,7 @@ go build && ./racing
 
 3. In another terminal window, start our api service...
 
-```bash
+```bash-*
 cd ./api
 
 go build && ./api
