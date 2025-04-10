@@ -35,6 +35,7 @@ Entain_Test/
 │  ├─ db/
 │  |  ├─ db.go
 │  |  ├─ queries.go
+│  |  ├─ queries_test.go
 │  |  ├─ races.go
 │  |  ├─ racing.go                
 │  ├─ proto/
@@ -193,7 +194,13 @@ cannot use service.NewRacingService(racesRepo) (value of interface type service.
 Despite these modifications, the error persisted until careful verification of import paths, regeneration of the proto files, and cleaning of cached modules resolved the conflict.
 
 ---
+## Testing
 
+A test file has been added in **/racing/db/queries_test.go** to verify the "visible only" filter and to serve as a basis for future testing:
+  
+- The test creates an in‑memory SQLite database, seeds it with test data (including one visible and one non‑visible race), and checks that filtering by visible races returns only races with visible = 1.
+
+---
 ## Known Issues & Future Steps
 
 - **Current Stuck Point:**  
