@@ -26,6 +26,7 @@ message ListRacesRequestFilter {
   repeated int64 meeting_ids = 1;
   // Add Visibility Filter
   bool only_visible = 2; // If true only returns races where visible = true
+  optional string order_by = 3;   // If not set, defaults to ordering by advertised_start_time
 }
 
 /* Resources */

@@ -116,7 +116,8 @@ type ListRacesRequestFilter struct {
 	state      protoimpl.MessageState `protogen:"open.v1"`
 	MeetingIds []int64                `protobuf:"varint,1,rep,packed,name=meeting_ids,json=meetingIds,proto3" json:"meeting_ids,omitempty"`
 	// Add Visibility Filter
-	OnlyVisible   bool `protobuf:"varint,2,opt,name=only_visible,json=onlyVisible,proto3" json:"only_visible,omitempty"` // If true only returns races where visible = true
+	OnlyVisible   bool    `protobuf:"varint,2,opt,name=only_visible,json=onlyVisible,proto3" json:"only_visible,omitempty"` // If true only returns races where visible = true
+	OrderBy       *string `protobuf:"bytes,3,opt,name=order_by,json=orderBy,proto3,oneof" json:"order_by,omitempty"`        // If not set, defaults to ordering by advertised_start_time
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -163,6 +164,13 @@ func (x *ListRacesRequestFilter) GetOnlyVisible() bool {
 		return x.OnlyVisible
 	}
 	return false
+}
+
+func (x *ListRacesRequestFilter) GetOrderBy() string {
+	if x != nil && x.OrderBy != nil {
+		return *x.OrderBy
+	}
+	return ""
 }
 
 // A race resource.
@@ -264,11 +272,13 @@ const file_racing_proto_rawDesc = "" +
 	"\x10ListRacesRequest\x126\n" +
 	"\x06filter\x18\x01 \x01(\v2\x1e.racing.ListRacesRequestFilterR\x06filter\"7\n" +
 	"\x11ListRacesResponse\x12\"\n" +
-	"\x05races\x18\x01 \x03(\v2\f.racing.RaceR\x05races\"\\\n" +
+	"\x05races\x18\x01 \x03(\v2\f.racing.RaceR\x05races\"\x89\x01\n" +
 	"\x16ListRacesRequestFilter\x12\x1f\n" +
 	"\vmeeting_ids\x18\x01 \x03(\x03R\n" +
 	"meetingIds\x12!\n" +
-	"\fonly_visible\x18\x02 \x01(\bR\vonlyVisible\"\xcb\x01\n" +
+	"\fonly_visible\x18\x02 \x01(\bR\vonlyVisible\x12\x1e\n" +
+	"\border_by\x18\x03 \x01(\tH\x00R\aorderBy\x88\x01\x01B\v\n" +
+	"\t_order_by\"\xcb\x01\n" +
 	"\x04Race\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +
@@ -318,6 +328,7 @@ func file_racing_proto_init() {
 	if File_racing_proto != nil {
 		return
 	}
+	file_racing_proto_msgTypes[2].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
