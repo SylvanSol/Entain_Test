@@ -3,6 +3,7 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 	"testing"
 	"time"
 
@@ -170,4 +171,69 @@ func TestListRaces_OrderBy(t *testing.T) {
 		actualOrderByName = append(actualOrderByName, race.Id)
 	}
 	assert.Equal(t, expectedOrderByName, actualOrderByName, "expected order by name %v, got %v", expectedOrderByName, actualOrderByName)
+}
+
+func TestListRaces_Status(t *testing.T) {
+	// Setup the in-memory DB and create the table
+	sqldb := setupTestDB(t)
+	defer sqldb.Close()
+
+	_, err := sqldb.Exec(`
+		CREATE TABLE IF NOT EXISTS races (
+			id INTEGER PRIMARY KEY,
+			meeting_id INTEGER,
+			name TEXT,
+			number INTEGER,
+			visible INTEGER,
+			advertised_start_time DATETIME
+		)
+	`)
+	assert.NoError(t, err, "failed to create races table")
+
+	// Prepare insert
+	stmt, err := sqldb.Prepare(`
+		INSERT OR IGNORE INTO races(id, meeting_id, name, number, visible, advertised_start_time)
+		VALUES (?,?,?,?,?,?)
+	`)
+	assert.NoError(t, err, "failed to prepare insert stmt")
+	defer stmt.Close()
+
+	// Compute a time in the past and one in the future
+	now := time.Now()
+	past := now.Add(-1 * time.Hour).Format(time.RFC3339)
+	future := now.Add(1 * time.Hour).Format(time.RFC3339)
+
+	// Insert two races
+	_, err = stmt.Exec(301, 1, "Past Race", 1, 1, past)
+	assert.NoError(t, err, "failed to insert past race")
+	_, err = stmt.Exec(302, 1, "Future Race", 2, 1, future)
+	assert.NoError(t, err, "failed to insert future race")
+
+	// List all races (using nil filter)
+	repo := NewRacesRepo(sqldb)
+	races, err := repo.List(nil)
+	assert.NoError(t, err, "List(nil) should not error")
+
+	// Find our two races and assert status
+	var gotPast, gotFuture bool
+	for _, r := range races {
+		switch r.Id {
+		case 301:
+			gotPast = true
+			assert.Equal(t,
+				racing.RaceStatus_CLOSED,
+				r.Status,
+				fmt.Sprintf("expected race 301 to be CLOSED, got %v", r.Status),
+			)
+		case 302:
+			gotFuture = true
+			assert.Equal(t,
+				racing.RaceStatus_OPEN,
+				r.Status,
+				fmt.Sprintf("expected race 302 to be OPEN, got %v", r.Status),
+			)
+		}
+	}
+	assert.True(t, gotPast, "did not find race 301 in results")
+	assert.True(t, gotFuture, "did not find race 302 in results")
 }

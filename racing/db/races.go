@@ -80,6 +80,12 @@ func (r *racesRepo) applyFilter(query string, filter *racing.ListRacesRequestFil
 		}
 	}
 
+	placeholders := strings.Repeat("?,", len(filter.MeetingIds)-1) + "?"
+	clauses = append(clauses, "meedting_id IN ("+placeholders+")")
+	for _, meetingID := range filter.MeetingIds {
+		args = append(args, meetingID)
+	}
+
 	if filter.OnlyVisible {
 		clauses = append(clauses, "visible = 1")
 	}
@@ -87,6 +93,13 @@ func (r *racesRepo) applyFilter(query string, filter *racing.ListRacesRequestFil
 	if len(clauses) != 0 {
 		query += " WHERE " + strings.Join(clauses, " AND ")
 	}
+
+	// Default ordering by advertised_start_time; allow override if provided
+	orderClause := " ORDER BY advertised_start_time"
+	if filter.OrderBy != nil && *filter.OrderBy != "" {
+		orderClause = " ORDER BY " + *filter.OrderBy
+	}
+	query += orderClause
 
 	return query, args
 }
@@ -114,7 +127,12 @@ func (m *racesRepo) scanRaces(
 		}
 
 		race.AdvertisedStartTime = ts
-
+		// Derive OPEN/CLOSED status
+		if advertisedStart.Before(time.Now()) {
+			race.Status = racing.RaceStatus_CLOSED
+		} else {
+			race.Status = racing.RaceStatus_OPEN
+		}
 		races = append(races, &race)
 	}
 

@@ -16,6 +16,13 @@ message ListRacesRequest {
   ListRacesRequestFilter filter = 1;
 }
 
+// Derive this based on advertised_start_time (past ⇒ CLOSED, future ⇒ OPEN).
+enum RaceStatus {
+  UNSPECIFIED = 0;
+  OPEN = 1;
+  CLOSED = 2;
+}
+
 // Response to ListRaces call.
 message ListRacesResponse {
   repeated Race races = 1;
@@ -45,5 +52,7 @@ message Race {
   bool visible = 5;
   // AdvertisedStartTime is the time the race is advertised to run.
   google.protobuf.Timestamp advertised_start_time = 6;
+  // Status of Race
+  RaceStatus status = 7;
 }
 

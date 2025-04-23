@@ -17,36 +17,21 @@ Recent modifications include adding a new filter to the `ListRaces` RPC to allow
 Entain_Test/
 ├─ api/                   
 │  ├─ proto/
-│  |  ├─ google/
-│  |  |  ├─ api/
-│  |  |  |  ├─ annotations.proto
-│  |  |  |  ├─ http.proto
-│  |  ├─ racing/
-│  |  |  ├─ racing.pb.go
-│  |  |  ├─ racing.pb.gw.go
-│  |  |  ├─ racing.proto
-│  |  |  ├─ racing_grpc.pb.go
-│  |  ├─ api.go
 │  ├─ go.mod
-│  ├─ go.sum
 │  ├─ main.go
 │  ├─ tools.go
 ├─ racing/                
 │  ├─ db/
 │  |  ├─ db.go
 │  |  ├─ queries.go
-│  |  ├─ races.go
-│  |  ├─ racing.go                
+│  |  ├─ queries_test.go                            # ← Updated with Task 1, 2 & 3 tests        
 │  ├─ proto/
 │  |  ├─ racing/
-│  |  |  ├─ racing.pb.go
-│  |  |  ├─ racing.proto
-│  |  |  ├─ racing_grpc.pb.go
+│  |  |  ├─ racing.proto                            # ← Defines RaceStatus enum
 │  |  ├─ racing.go           
-│  ├─ service/
-│  |  ├─ racing.go
+│  ├─ service/                                      
+│  |  ├─ racing.go                                  # ← Populates Race.Status
 │  ├─ go.mod
-│  ├─ go.sum      
 │  ├─ main.go
 │  ├─ tools.go            
 ├─ example.png                                      # The example PNG for the test
@@ -60,29 +45,9 @@ Entain_Test/
 
 ### Prerequisites
 
-- [Go (latest version)](https://golang.org/doc/install)  
-  Windows:  
-  ```bash
-  choco install go
-  ```  
-  MacOS / Linux:  
-  ```bash
-  brew install go
-  ```
-
-- [Protocol Buffers Compiler (protoc)](https://grpc.io/docs/protoc-installation/)  
-  Windows:  
-  ```bash
-  choco install protoc
-  ```  
-  MacOS / Linux:  
-  ```bash
-  brew install protobuf 
-  ```
-
-- Required Go modules and tools are defined in each module's **go.mod** file.
-
----
+- **Go ≥ 1.24.1**  
+- **protoc** with `protoc-gen-go` & `protoc-gen-go-grpc` plugins  
+- **SQLite3** driver (`github.com/mattn/go-sqlite3`)
 
 ## Installation
 
@@ -92,105 +57,62 @@ Entain_Test/
    cd Entain_Test
    ```
 
-2. **Update Dependencies and Generate Protobuf Files:**
+2. **Generate Protos**  
+   *Racing service:*
+   ```powershell
+   & 'C:\ProgramData\chocolatey\bin\protoc.exe' -I racing/proto \
+     --go_out=racing/proto --go_opt paths=source_relative \
+     --go-grpc_out=racing/proto --go-grpc_opt paths=source_relative \
+     racing/proto/racing.proto
+   ```
+   *API service:*
+   ```powershell
+   & 'C:\ProgramData\chocolatey\bin\protoc.exe' -I api/proto/google/api -I api/proto/racing \
+     --go_out=api/proto/racing --go_opt paths=source_relative \
+     --go-grpc_out=api/proto/racing --go-grpc_opt paths=source_relative \
+     --grpc-gateway_out=api/proto/racing --grpc-gateway_opt paths=source_relative \
+     api/proto/racing/racing.proto
+   ```
 
-   Ensure you are using the updated Go toolchain (as specified in your go.mod) and that your modules use recent versions (for instance, gRPC-Go v1.71.1). Then regenerate your protobuf files as follows:
-
-   **For the Racing Service:**
-
-   - **Generating Protobuf Files (Racing):**
-     ```powershell
-     & 'C:\ProgramData\chocolatey\bin\protoc.exe' -I . --go_out=. --go_opt paths=source_relative --go-grpc_out=. --go-grpc_opt paths=source_relative --grpc-gateway_out=. --grpc-gateway_opt paths=source_relative racing.proto
-     ```
-
-   **For the API Service:**
-
-   - **Generating Protobuf Files (API):**
-     ```powershell
-     & 'C:\ProgramData\chocolatey\bin\protoc.exe' -I .. -I . --go_out=. --go_opt paths=source_relative --go-grpc_out=. --go-grpc_opt paths=source_relative --grpc-gateway_out=. --grpc-gateway_opt paths=source_relative racing.proto
-     ```
-
-3. **Build the Services:**
-
-   **For the Racing Service:**
-
-   - Enable CGO and update your PATH for MinGW:
-     ```powershell
-     $env:CGO_ENABLED = "1"
-     $env:PATH += ";C:\ProgramData\mingw64\mingw64\bin"
-     go build
-     ./racing
-     ```
-
-   **For the API Service:**
+3. **Build & Run**  
+   *Racing:*
+   ```powershell
+   $env:CGO_ENABLED=1
+   $env:PATH += ";C:\ProgramData\mingw64\mingw64\bin"
+   cd racing && go build && ./racing
+   ```
+   *API:*
    ```bash
-   go build
-   ./api
+   cd api && go build && ./api
    ```
 
 ---
 
 ## Recent Changes
 
-### Addition of the "Visible Only" Filter
+### Task 1: “Visible Only” Filter
+- **Proto:** added `bool only_visible = 2` to `ListRacesRequestFilter`.  
+- **DB repo:** `applyFilter` appends `visible = 1` when `only_visible` is true.
 
-- **Proto Modification:**  
-  In the `ListRacesRequestFilter` message (in `racing.proto`), a new optional boolean field has been added:
+### Task 2: Ordering Support
+- **Proto:** added `optional string order_by = 3` to `ListRacesRequestFilter`.  
+- **DB repo:** `applyFilter` now appends `ORDER BY advertised_start_time` or custom column.
+
+### Task 3: Derived `status` Field
+- **Proto:** added
   ```proto
-  optional bool visible_only = 2;
+  enum RaceStatus { UNSPECIFIED=0; OPEN=1; CLOSED=2; }
+  message Race { … RaceStatus status = 7; }
   ```
-  This allows API consumers to request that only races with `visible = true` are returned.
-
-- **Repository Update:**  
-  The `applyFilter` function in **/racing/db/races.go** has been modified to append the clause `"visible = 1"` when `visible_only` is true.
-
-- **Client Example:**
-  ```bash
-  curl -X POST http://localhost:8000/v1/list-races \
-       -H 'Content-Type: application/json' \
-       -d '{
-         "filter": {
-           "visibleOnly": true
-         }
-       }'
+- **Service:** in `service/racing.go`, after scanning `advertised_start_time`, set
+  ```go
+  if advertisedStart.Before(time.Now()) {
+    race.Status = racing.RaceStatus_CLOSED
+  } else {
+    race.Status = racing.RaceStatus_OPEN
+  }
   ```
-
-### gRPC Server Interface Issue and Resolution
-
-While upgrading dependencies (with Go 1.24.1 and gRPC-Go v1.71.1), the following compiler error was encountered:
-```
-cannot use service.NewRacingService(racesRepo) (value of interface type service.Racing) as racing.RacingServer value in argument to racing.RegisterRacingServer: service.Racing does not implement racing.RacingServer (missing method mustEmbedUnimplementedRacingServer)
-```
-  
-**Resolution Steps:**
-
-1. **Remove Local Interface:**  
-   Any custom local interface definitions (e.g. type Racing) were removed from the service package to rely solely on the generated `racing.RacingServer` interface.
-
-2. **Embed Unimplemented Server:**  
-   In **/racing/service/racing.go**, the service struct was updated to embed `racing.UnimplementedRacingServer` so that it automatically implements the required method:
-   ```go
-   type racingService struct {
-       racing.UnimplementedRacingServer  // This embeds mustEmbedUnimplementedRacingServer.
-       racesRepo db.RacesRepo
-   }
-   ```
-
-3. **Constructor Return Type:**  
-   The constructor was modified to return `racing.RacingServer`:
-   ```go
-   func NewRacingService(racesRepo db.RacesRepo) racing.RacingServer {
-       return &racingService{racesRepo: racesRepo}
-   }
-   ```
-
-4. **Re-generation and Clean:**  
-   After these changes, the protobuf files were regenerated using the latest protoc plugins, and the build cache was cleaned using:
-   ```bash
-   go clean -cache -modcache
-   ```
-
-Despite these modifications, the error persisted until careful verification of import paths, regeneration of the proto files, and cleaning of cached modules resolved the conflict.
+- **Tests:** new `TestListRaces_Status` in `db/queries_test.go` verifies CLOSED vs. OPEN.
 
 ---
 
@@ -204,6 +126,21 @@ Despite these modifications, the error persisted until careful verification of i
   - Implement further endpoints, such as fetching a single race by ID and creating a separate Sports service.
   - Improve unit and integration tests.
   
+---
+
+## Testing
+
+All tests live in **racing/db/queries_test.go**. They cover:
+
+1. Visible-only filtering.  
+2. Default and custom ordering.  
+3. Derived OPEN/CLOSED status.
+
+Run:
+```bash
+go test ./racing/db
+```
+
 ---
 
 ## Contact
