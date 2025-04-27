@@ -13,6 +13,7 @@ Recent modifications include:
 2. **Ordering** support via an `order_by` field.  
 3. **Derived `status`** on each `Race` (OPEN/CLOSED based on time).  
 4. **Attempted “GetRaceById”** RPC—currently incomplete due to import errors and time constraints.
+5. **“CreateRace”** RPC to add new races.
 
 ---
 
@@ -29,13 +30,13 @@ Entain_Test/
 │  ├─ db/
 │  |  ├─ db.go
 │  |  ├─ queries.go
-│  |  ├─ queries_test.go                            # ← Updated with Task 1, 2 & 3 tests        
+│  |  ├─ queries_test.go                            # ← Testing for all tasks
 │  ├─ proto/
 │  |  ├─ racing/
-│  |  |  ├─ racing.proto                            # ← Defines RaceStatus enum
+│  |  |  ├─ racing.proto                            # ← Service proto (no HTTP imports)
 │  |  ├─ racing.go           
 │  ├─ service/                                      
-│  |  ├─ racing.go                                  # ← Populates Race.Status
+│  |  ├─ racing.go                                  # ← Implements status and CreateRace
 │  ├─ go.mod
 │  ├─ main.go
 │  ├─ tools.go            
@@ -133,11 +134,53 @@ Entain_Test/
   because the racing service proto should not include HTTP annotations.  
 - **Current status:** Task 4 could not be completed in time due to these import errors and the elapsed time since assignment.
 
+### Task 5: CreateRace RPC & “Add Race” Functionality  
+- **Proto:** in `/racing/proto/racing.proto` added:
+  ```proto
+  rpc CreateRace(CreateRaceRequest) returns (CreateRaceResponse);
+
+  message CreateRaceRequest {
+    int64 meeting_id             = 1;
+    string name                  = 2;
+    int64 number                 = 3;
+    bool visible                 = 4;
+    google.protobuf.Timestamp advertised_start_time = 5;
+  }
+
+  message CreateRaceResponse {
+    int64 id = 1;
+  }
+  ```  
+- **Repository:** extended `RacesRepo` interface and `*racesRepo` with:
+  ```go
+  Create(race *racing.Race) (int64, error)
+  ```  
+  which INSERTs a new row and returns its auto-assigned ID.  
+- **Service:** implemented `CreateRace` in `service/racing.go`:
+  ```go
+  func (s *racingService) CreateRace(ctx context.Context, req *racing.CreateRaceRequest) (*racing.CreateRaceResponse, error) {
+    ts := timestamppb.New(req.AdvertisedStartTime.AsTime())
+    newRace := &racing.Race{
+      MeetingId:           req.MeetingId,
+      Name:                req.Name,
+      Number:              req.Number,
+      Visible:             req.Visible,
+      AdvertisedStartTime: req.AdvertisedStartTime,
+    }
+    id, err := s.racesRepo.Create(newRace)
+    if err != nil {
+      return nil, status.Errorf(codes.Internal, "failed to create race: %v", err)
+    }
+    return &racing.CreateRaceResponse{Id: id}, nil
+  }
+  ```  
+- **Tests:** `TestCreateRace` in `db/queries_test.go` verifies insertion and data round-trip.
+
 ---
 
 ## Testing
 
-All implemented tests live in **racing/db/queries_test.go** (Tasks 1–3 covered). Task 4 tests are pending completion of the service stub.
+All implemented tests live in **racing/db/queries_test.go** (Tasks 1–3 covered). Task 4 and 5 have errors that cause them not to run
 
 Run:
 ```bash

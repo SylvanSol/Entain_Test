@@ -413,6 +413,128 @@ func (x *GetRaceResponse) GetRace() *Race {
 	return nil
 }
 
+// Request to create a new Race.
+type CreateRaceRequest struct {
+	state               protoimpl.MessageState `protogen:"open.v1"`
+	MeetingId           int64                  `protobuf:"varint,1,opt,name=meeting_id,json=meetingId,proto3" json:"meeting_id,omitempty"`
+	Name                string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Number              int64                  `protobuf:"varint,3,opt,name=number,proto3" json:"number,omitempty"`
+	Visible             bool                   `protobuf:"varint,4,opt,name=visible,proto3" json:"visible,omitempty"`
+	AdvertisedStartTime *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=advertised_start_time,json=advertisedStartTime,proto3" json:"advertised_start_time,omitempty"`
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
+}
+
+func (x *CreateRaceRequest) Reset() {
+	*x = CreateRaceRequest{}
+	mi := &file_racing_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateRaceRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateRaceRequest) ProtoMessage() {}
+
+func (x *CreateRaceRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_racing_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateRaceRequest.ProtoReflect.Descriptor instead.
+func (*CreateRaceRequest) Descriptor() ([]byte, []int) {
+	return file_racing_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *CreateRaceRequest) GetMeetingId() int64 {
+	if x != nil {
+		return x.MeetingId
+	}
+	return 0
+}
+
+func (x *CreateRaceRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *CreateRaceRequest) GetNumber() int64 {
+	if x != nil {
+		return x.Number
+	}
+	return 0
+}
+
+func (x *CreateRaceRequest) GetVisible() bool {
+	if x != nil {
+		return x.Visible
+	}
+	return false
+}
+
+func (x *CreateRaceRequest) GetAdvertisedStartTime() *timestamppb.Timestamp {
+	if x != nil {
+		return x.AdvertisedStartTime
+	}
+	return nil
+}
+
+// Response contains the new Race ID.
+type CreateRaceResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateRaceResponse) Reset() {
+	*x = CreateRaceResponse{}
+	mi := &file_racing_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateRaceResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateRaceResponse) ProtoMessage() {}
+
+func (x *CreateRaceResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_racing_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateRaceResponse.ProtoReflect.Descriptor instead.
+func (*CreateRaceResponse) Descriptor() ([]byte, []int) {
+	return file_racing_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *CreateRaceResponse) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
 var File_racing_proto protoreflect.FileDescriptor
 
 const file_racing_proto_rawDesc = "" +
@@ -440,16 +562,27 @@ const file_racing_proto_rawDesc = "" +
 	"\x0eGetRaceRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"3\n" +
 	"\x0fGetRaceResponse\x12 \n" +
-	"\x04race\x18\x01 \x01(\v2\f.racing.RaceR\x04race*3\n" +
+	"\x04race\x18\x01 \x01(\v2\f.racing.RaceR\x04race\"\xc8\x01\n" +
+	"\x11CreateRaceRequest\x12\x1d\n" +
+	"\n" +
+	"meeting_id\x18\x01 \x01(\x03R\tmeetingId\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12\x16\n" +
+	"\x06number\x18\x03 \x01(\x03R\x06number\x12\x18\n" +
+	"\avisible\x18\x04 \x01(\bR\avisible\x12N\n" +
+	"\x15advertised_start_time\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\x13advertisedStartTime\"$\n" +
+	"\x12CreateRaceResponse\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id*3\n" +
 	"\n" +
 	"RaceStatus\x12\x0f\n" +
 	"\vUNSPECIFIED\x10\x00\x12\b\n" +
 	"\x04OPEN\x10\x01\x12\n" +
 	"\n" +
-	"\x06CLOSED\x10\x022\x88\x01\n" +
+	"\x06CLOSED\x10\x022\xcd\x01\n" +
 	"\x06Racing\x12B\n" +
 	"\tListRaces\x12\x18.racing.ListRacesRequest\x1a\x19.racing.ListRacesResponse\"\x00\x12:\n" +
-	"\aGetRace\x12\x16.racing.GetRaceRequest\x1a\x17.racing.GetRaceResponseB\tZ\a/racingb\x06proto3"
+	"\aGetRace\x12\x16.racing.GetRaceRequest\x1a\x17.racing.GetRaceResponse\x12C\n" +
+	"\n" +
+	"CreateRace\x12\x19.racing.CreateRaceRequest\x1a\x1a.racing.CreateRaceResponseB\tZ\a/racingb\x06proto3"
 
 var (
 	file_racing_proto_rawDescOnce sync.Once
@@ -464,7 +597,7 @@ func file_racing_proto_rawDescGZIP() []byte {
 }
 
 var file_racing_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_racing_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_racing_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_racing_proto_goTypes = []any{
 	(RaceStatus)(0),                // 0: racing.RaceStatus
 	(*ListRacesRequest)(nil),       // 1: racing.ListRacesRequest
@@ -473,23 +606,28 @@ var file_racing_proto_goTypes = []any{
 	(*Race)(nil),                   // 4: racing.Race
 	(*GetRaceRequest)(nil),         // 5: racing.GetRaceRequest
 	(*GetRaceResponse)(nil),        // 6: racing.GetRaceResponse
-	(*timestamppb.Timestamp)(nil),  // 7: google.protobuf.Timestamp
+	(*CreateRaceRequest)(nil),      // 7: racing.CreateRaceRequest
+	(*CreateRaceResponse)(nil),     // 8: racing.CreateRaceResponse
+	(*timestamppb.Timestamp)(nil),  // 9: google.protobuf.Timestamp
 }
 var file_racing_proto_depIdxs = []int32{
 	3, // 0: racing.ListRacesRequest.filter:type_name -> racing.ListRacesRequestFilter
 	4, // 1: racing.ListRacesResponse.races:type_name -> racing.Race
-	7, // 2: racing.Race.advertised_start_time:type_name -> google.protobuf.Timestamp
+	9, // 2: racing.Race.advertised_start_time:type_name -> google.protobuf.Timestamp
 	0, // 3: racing.Race.status:type_name -> racing.RaceStatus
 	4, // 4: racing.GetRaceResponse.race:type_name -> racing.Race
-	1, // 5: racing.Racing.ListRaces:input_type -> racing.ListRacesRequest
-	5, // 6: racing.Racing.GetRace:input_type -> racing.GetRaceRequest
-	2, // 7: racing.Racing.ListRaces:output_type -> racing.ListRacesResponse
-	6, // 8: racing.Racing.GetRace:output_type -> racing.GetRaceResponse
-	7, // [7:9] is the sub-list for method output_type
-	5, // [5:7] is the sub-list for method input_type
-	5, // [5:5] is the sub-list for extension type_name
-	5, // [5:5] is the sub-list for extension extendee
-	0, // [0:5] is the sub-list for field type_name
+	9, // 5: racing.CreateRaceRequest.advertised_start_time:type_name -> google.protobuf.Timestamp
+	1, // 6: racing.Racing.ListRaces:input_type -> racing.ListRacesRequest
+	5, // 7: racing.Racing.GetRace:input_type -> racing.GetRaceRequest
+	7, // 8: racing.Racing.CreateRace:input_type -> racing.CreateRaceRequest
+	2, // 9: racing.Racing.ListRaces:output_type -> racing.ListRacesResponse
+	6, // 10: racing.Racing.GetRace:output_type -> racing.GetRaceResponse
+	8, // 11: racing.Racing.CreateRace:output_type -> racing.CreateRaceResponse
+	9, // [9:12] is the sub-list for method output_type
+	6, // [6:9] is the sub-list for method input_type
+	6, // [6:6] is the sub-list for extension type_name
+	6, // [6:6] is the sub-list for extension extendee
+	0, // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_racing_proto_init() }
@@ -504,7 +642,7 @@ func file_racing_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_racing_proto_rawDesc), len(file_racing_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   6,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

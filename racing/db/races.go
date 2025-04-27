@@ -19,6 +19,9 @@ type RacesRepo interface {
 
 	// List will return a list of races.
 	List(filter *racing.ListRacesRequestFilter) ([]*racing.Race, error)
+
+	// Create will insert a new race and return  its newly-assigned ID.
+	Create(race *racing.Race) (int64, error)
 }
 
 type racesRepo struct {
@@ -172,4 +175,14 @@ func (r *racesRepo) GetByID(id int64) (*racing.Race, error) {
 	}
 
 	return &race, nil
+}
+
+// Create inserts a new race and returns its newly-assigned ID.
+func (r *racesRepo) Create(race *racing.Race) (int64, error) {
+	res, err := r.db.Exec(`
+        INSERT INTO races(meeting_id, name, number, visible, advertised_start_time) VALUES (?, ?, ?, ?, ?)`, race.MeetingId, race.Name, race.Number, race.Visible, race.AdvertisedStartTime.AsTime())
+	if err != nil {
+		return 0, err
+	}
+	return res.LastInsertId()
 }
