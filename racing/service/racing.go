@@ -30,3 +30,16 @@ func (s *racingService) ListRaces(ctx context.Context, in *racing.ListRacesReque
 
 	return &racing.ListRacesResponse{Races: races}, nil
 }
+
+/*
+func (s *racingService) GetRace(ctx context.Context, req *racing.GetRaceRequest) (*racing.GetRaceResponse, error) {
+	race, err := s.racesRepo.GetByID(req.Id)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, status.Errorf(codes.NotFound, "race %d not found", req.Id)
+		}
+		return nil, status.Errorf(codes.Internal, "error fetching race: %v", err)
+	}
+	return &racing.GetRaceResponse{Race: race}, nil
+}
+*/

@@ -138,3 +138,38 @@ func (m *racesRepo) scanRaces(
 
 	return races, nil
 }
+
+// GetByID fetches a single Race by its ID.
+func (r *racesRepo) GetByID(id int64) (*racing.Race, error) {
+	row := r.db.QueryRow(`SELECT id, meeting_id, name, number, visible, advertised_start_time FROM races WHERE id = ?`, id)
+	var (
+		race            racing.Race
+		advertisedStart time.Time
+	)
+	if err := row.Scan(
+		&race.Id,
+		&race.MeetingId,
+		&race.Name,
+		&race.Number,
+		&race.Visible,
+		&advertisedStart,
+	); err != nil {
+		return nil, err
+	}
+
+	// Timestamp conversion
+	ts, err := ptypes.TimestampProto(advertisedStart)
+	if err != nil {
+		return nil, err
+	}
+	race.AdvertisedStartTime = ts
+
+	// Re-use Task 3 logic:
+	if advertisedStart.Before(time.Now()) {
+		race.Status = racing.RaceStatus_CLOSED
+	} else {
+		race.Status = racing.RaceStatus_OPEN
+	}
+
+	return &race, nil
+}

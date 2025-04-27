@@ -323,6 +323,96 @@ func (x *Race) GetStatus() RaceStatus {
 	return RaceStatus_UNSPECIFIED
 }
 
+// Request for GetRace call.
+type GetRaceRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetRaceRequest) Reset() {
+	*x = GetRaceRequest{}
+	mi := &file_racing_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetRaceRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetRaceRequest) ProtoMessage() {}
+
+func (x *GetRaceRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_racing_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetRaceRequest.ProtoReflect.Descriptor instead.
+func (*GetRaceRequest) Descriptor() ([]byte, []int) {
+	return file_racing_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *GetRaceRequest) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+// Response to GetRace call.
+type GetRaceResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Race          *Race                  `protobuf:"bytes,1,opt,name=race,proto3" json:"race,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetRaceResponse) Reset() {
+	*x = GetRaceResponse{}
+	mi := &file_racing_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetRaceResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetRaceResponse) ProtoMessage() {}
+
+func (x *GetRaceResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_racing_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetRaceResponse.ProtoReflect.Descriptor instead.
+func (*GetRaceResponse) Descriptor() ([]byte, []int) {
+	return file_racing_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *GetRaceResponse) GetRace() *Race {
+	if x != nil {
+		return x.Race
+	}
+	return nil
+}
+
 var File_racing_proto protoreflect.FileDescriptor
 
 const file_racing_proto_rawDesc = "" +
@@ -346,15 +436,20 @@ const file_racing_proto_rawDesc = "" +
 	"\x06number\x18\x04 \x01(\x03R\x06number\x12\x18\n" +
 	"\avisible\x18\x05 \x01(\bR\avisible\x12N\n" +
 	"\x15advertised_start_time\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\x13advertisedStartTime\x12*\n" +
-	"\x06status\x18\a \x01(\x0e2\x12.racing.RaceStatusR\x06status*3\n" +
+	"\x06status\x18\a \x01(\x0e2\x12.racing.RaceStatusR\x06status\" \n" +
+	"\x0eGetRaceRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"3\n" +
+	"\x0fGetRaceResponse\x12 \n" +
+	"\x04race\x18\x01 \x01(\v2\f.racing.RaceR\x04race*3\n" +
 	"\n" +
 	"RaceStatus\x12\x0f\n" +
 	"\vUNSPECIFIED\x10\x00\x12\b\n" +
 	"\x04OPEN\x10\x01\x12\n" +
 	"\n" +
-	"\x06CLOSED\x10\x022L\n" +
+	"\x06CLOSED\x10\x022\x88\x01\n" +
 	"\x06Racing\x12B\n" +
-	"\tListRaces\x12\x18.racing.ListRacesRequest\x1a\x19.racing.ListRacesResponse\"\x00B\tZ\a/racingb\x06proto3"
+	"\tListRaces\x12\x18.racing.ListRacesRequest\x1a\x19.racing.ListRacesResponse\"\x00\x12:\n" +
+	"\aGetRace\x12\x16.racing.GetRaceRequest\x1a\x17.racing.GetRaceResponseB\tZ\a/racingb\x06proto3"
 
 var (
 	file_racing_proto_rawDescOnce sync.Once
@@ -369,27 +464,32 @@ func file_racing_proto_rawDescGZIP() []byte {
 }
 
 var file_racing_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_racing_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_racing_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_racing_proto_goTypes = []any{
 	(RaceStatus)(0),                // 0: racing.RaceStatus
 	(*ListRacesRequest)(nil),       // 1: racing.ListRacesRequest
 	(*ListRacesResponse)(nil),      // 2: racing.ListRacesResponse
 	(*ListRacesRequestFilter)(nil), // 3: racing.ListRacesRequestFilter
 	(*Race)(nil),                   // 4: racing.Race
-	(*timestamppb.Timestamp)(nil),  // 5: google.protobuf.Timestamp
+	(*GetRaceRequest)(nil),         // 5: racing.GetRaceRequest
+	(*GetRaceResponse)(nil),        // 6: racing.GetRaceResponse
+	(*timestamppb.Timestamp)(nil),  // 7: google.protobuf.Timestamp
 }
 var file_racing_proto_depIdxs = []int32{
 	3, // 0: racing.ListRacesRequest.filter:type_name -> racing.ListRacesRequestFilter
 	4, // 1: racing.ListRacesResponse.races:type_name -> racing.Race
-	5, // 2: racing.Race.advertised_start_time:type_name -> google.protobuf.Timestamp
+	7, // 2: racing.Race.advertised_start_time:type_name -> google.protobuf.Timestamp
 	0, // 3: racing.Race.status:type_name -> racing.RaceStatus
-	1, // 4: racing.Racing.ListRaces:input_type -> racing.ListRacesRequest
-	2, // 5: racing.Racing.ListRaces:output_type -> racing.ListRacesResponse
-	5, // [5:6] is the sub-list for method output_type
-	4, // [4:5] is the sub-list for method input_type
-	4, // [4:4] is the sub-list for extension type_name
-	4, // [4:4] is the sub-list for extension extendee
-	0, // [0:4] is the sub-list for field type_name
+	4, // 4: racing.GetRaceResponse.race:type_name -> racing.Race
+	1, // 5: racing.Racing.ListRaces:input_type -> racing.ListRacesRequest
+	5, // 6: racing.Racing.GetRace:input_type -> racing.GetRaceRequest
+	2, // 7: racing.Racing.ListRaces:output_type -> racing.ListRacesResponse
+	6, // 8: racing.Racing.GetRace:output_type -> racing.GetRaceResponse
+	7, // [7:9] is the sub-list for method output_type
+	5, // [5:7] is the sub-list for method input_type
+	5, // [5:5] is the sub-list for extension type_name
+	5, // [5:5] is the sub-list for extension extendee
+	0, // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_racing_proto_init() }
@@ -404,7 +504,7 @@ func file_racing_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_racing_proto_rawDesc), len(file_racing_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   4,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

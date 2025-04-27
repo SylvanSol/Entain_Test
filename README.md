@@ -3,11 +3,16 @@
 ## Overview
 
 This repository is my solution for the Entain Technical Test. The project is structured as a multi-service Go application demonstrating:
-  
-- A basic REST gateway in the **api** directory.
+
+- A basic REST gateway in the **api** directory.  
 - A bare-bones racing service in the **racing** directory.
 
-Recent modifications include adding a new filter to the `ListRaces` RPC to allow clients to request "visible only" races.
+Recent modifications include:
+
+1. **“Visible only”** filter on `ListRaces`.  
+2. **Ordering** support via an `order_by` field.  
+3. **Derived `status`** on each `Race` (OPEN/CLOSED based on time).  
+4. **Attempted “GetRaceById”** RPC—currently incomplete due to import errors and time constraints.
 
 ---
 
@@ -114,6 +119,31 @@ Entain_Test/
   ```
 - **Tests:** new `TestListRaces_Status` in `db/queries_test.go` verifies CLOSED vs. OPEN.
 
+### Task 4: GetRaceById RPC (Incomplete)  
+- **Proto (service):** attempted to add:
+  ```proto
+  rpc GetRace(GetRaceRequest) returns (GetRaceResponse);
+  ```  
+  to `/racing/proto/racing.proto`.  
+- **Error encountered:**
+  ```
+  Import "google/api/annotations.proto" was not found or had errors.
+  Import "google/api/http.proto" was not found or had errors.
+  ```  
+  because the racing service proto should not include HTTP annotations.  
+- **Current status:** Task 4 could not be completed in time due to these import errors and the elapsed time since assignment.
+
+---
+
+## Testing
+
+All implemented tests live in **racing/db/queries_test.go** (Tasks 1–3 covered). Task 4 tests are pending completion of the service stub.
+
+Run:
+```bash
+go test ./racing/db
+```
+
 ---
 
 ## Known Issues & Future Steps
@@ -126,33 +156,17 @@ Entain_Test/
   - Implement further endpoints, such as fetching a single race by ID and creating a separate Sports service.
   - Improve unit and integration tests.
   
----
-
-## Testing
-
-All tests live in **racing/db/queries_test.go**. They cover:
-
-1. Visible-only filtering.  
-2. Default and custom ordering.  
-3. Derived OPEN/CLOSED status.
-
-Run:
-```bash
-go test ./racing/db
-```
+- **Task 4 Incomplete:**  
+  GetRaceById RPC stubs in `racing/proto` fail to build due to inappropriate HTTP imports.  
+- **Next steps:**  
+  - Strip gateway annotations from service proto, regenerate, then implement the repo and service methods.  
+  - Add corresponding unit tests.  
+  - Implement additional RPCs (e.g. GetRaceById).
 
 ---
 
 ## Contact
 
 If you have any questions or require further clarification, please feel free to reach out.
-
----
-
-## Bibliography
-
-- [gRPC-Go Documentation – Official Site](https://pkg.go.dev/google.golang.org/grpc) citeturn7file4
-- [Protocol Buffers Documentation](https://developers.google.com/protocol-buffers) citeturn7file4
-- [gRPC-Gateway Documentation](https://grpc-ecosystem.github.io/grpc-gateway/) citeturn7file4
 
 ---

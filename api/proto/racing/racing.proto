@@ -11,6 +11,8 @@ service Racing {
   rpc ListRaces(ListRacesRequest) returns (ListRacesResponse) {
     option (google.api.http) = { post: "/v1/list-races", body: "*" };
   }
+  // GetRace returns a single race by ID
+  rpc GetRace(GetRaceRequest) returns (GetRaceResponse);
 }
 
 /* Requests/Responses */
@@ -59,3 +61,12 @@ message Race {
   // Status of Race
   RaceStatus status = 7;
 }
+// Request for GetRace call.
+message GetRaceRequest {
+  int64 id = 1;
+}
+// Response to GetRace call.
+message GetRaceResponse {
+  Race race = 1;
+}
+
