@@ -6,19 +6,20 @@ import (
 	"golang.org/x/net/context"
 )
 
-type Racing interface {
+/* type Racing interface {
 	// ListRaces will return a collection of races.
 	ListRaces(ctx context.Context, in *racing.ListRacesRequest) (*racing.ListRacesResponse, error)
 }
-
+*/
 // racingService implements the Racing interface.
 type racingService struct {
-	racesRepo db.RacesRepo
+	racing.UnimplementedRacingServer // Embedding due to later version of Go
+	racesRepo                        db.RacesRepo
 }
 
 // NewRacingService instantiates and returns a new racingService.
-func NewRacingService(racesRepo db.RacesRepo) Racing {
-	return &racingService{racesRepo}
+func NewRacingService(racesRepo db.RacesRepo) racing.RacingServer {
+	return &racingService{racesRepo: racesRepo}
 }
 
 func (s *racingService) ListRaces(ctx context.Context, in *racing.ListRacesRequest) (*racing.ListRacesResponse, error) {
@@ -29,3 +30,16 @@ func (s *racingService) ListRaces(ctx context.Context, in *racing.ListRacesReque
 
 	return &racing.ListRacesResponse{Races: races}, nil
 }
+
+/*
+func (s *racingService) GetRace(ctx context.Context, req *racing.GetRaceRequest) (*racing.GetRaceResponse, error) {
+	race, err := s.racesRepo.GetByID(req.Id)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, status.Errorf(codes.NotFound, "race %d not found", req.Id)
+		}
+		return nil, status.Errorf(codes.Internal, "error fetching race: %v", err)
+	}
+	return &racing.GetRaceResponse{Race: race}, nil
+}
+*/

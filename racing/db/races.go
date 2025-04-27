@@ -19,6 +19,9 @@ type RacesRepo interface {
 
 	// List will return a list of races.
 	List(filter *racing.ListRacesRequestFilter) ([]*racing.Race, error)
+
+	// Create will insert a new race and return  its newly-assigned ID.
+	Create(race *racing.Race) (int64, error)
 }
 
 type racesRepo struct {
@@ -80,9 +83,26 @@ func (r *racesRepo) applyFilter(query string, filter *racing.ListRacesRequestFil
 		}
 	}
 
+	placeholders := strings.Repeat("?,", len(filter.MeetingIds)-1) + "?"
+	clauses = append(clauses, "meedting_id IN ("+placeholders+")")
+	for _, meetingID := range filter.MeetingIds {
+		args = append(args, meetingID)
+	}
+
+	if filter.OnlyVisible {
+		clauses = append(clauses, "visible = 1")
+	}
+
 	if len(clauses) != 0 {
 		query += " WHERE " + strings.Join(clauses, " AND ")
 	}
+
+	// Default ordering by advertised_start_time; allow override if provided
+	orderClause := " ORDER BY advertised_start_time"
+	if filter.OrderBy != nil && *filter.OrderBy != "" {
+		orderClause = " ORDER BY " + *filter.OrderBy
+	}
+	query += orderClause
 
 	return query, args
 }
@@ -110,9 +130,59 @@ func (m *racesRepo) scanRaces(
 		}
 
 		race.AdvertisedStartTime = ts
-
+		// Derive OPEN/CLOSED status
+		if advertisedStart.Before(time.Now()) {
+			race.Status = racing.RaceStatus_CLOSED
+		} else {
+			race.Status = racing.RaceStatus_OPEN
+		}
 		races = append(races, &race)
 	}
 
 	return races, nil
+}
+
+// GetByID fetches a single Race by its ID.
+func (r *racesRepo) GetByID(id int64) (*racing.Race, error) {
+	row := r.db.QueryRow(`SELECT id, meeting_id, name, number, visible, advertised_start_time FROM races WHERE id = ?`, id)
+	var (
+		race            racing.Race
+		advertisedStart time.Time
+	)
+	if err := row.Scan(
+		&race.Id,
+		&race.MeetingId,
+		&race.Name,
+		&race.Number,
+		&race.Visible,
+		&advertisedStart,
+	); err != nil {
+		return nil, err
+	}
+
+	// Timestamp conversion
+	ts, err := ptypes.TimestampProto(advertisedStart)
+	if err != nil {
+		return nil, err
+	}
+	race.AdvertisedStartTime = ts
+
+	// Re-use Task 3 logic:
+	if advertisedStart.Before(time.Now()) {
+		race.Status = racing.RaceStatus_CLOSED
+	} else {
+		race.Status = racing.RaceStatus_OPEN
+	}
+
+	return &race, nil
+}
+
+// Create inserts a new race and returns its newly-assigned ID.
+func (r *racesRepo) Create(race *racing.Race) (int64, error) {
+	res, err := r.db.Exec(`
+        INSERT INTO races(meeting_id, name, number, visible, advertised_start_time) VALUES (?, ?, ?, ?, ?)`, race.MeetingId, race.Name, race.Number, race.Visible, race.AdvertisedStartTime.AsTime())
+	if err != nil {
+		return 0, err
+	}
+	return res.LastInsertId()
 }
