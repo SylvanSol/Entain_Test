@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v6.30.2
-// source: racing.proto
+// source: racing/racing.proto
 
 package racing
 
@@ -19,9 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Racing_ListRaces_FullMethodName  = "/racing.Racing/ListRaces"
-	Racing_GetRace_FullMethodName    = "/racing.Racing/GetRace"
-	Racing_CreateRace_FullMethodName = "/racing.Racing/CreateRace"
+	Racing_ListRaces_FullMethodName = "/racing.Racing/ListRaces"
+	Racing_GetRace_FullMethodName   = "/racing.Racing/GetRace"
 )
 
 // RacingClient is the client API for Racing service.
@@ -32,8 +31,6 @@ type RacingClient interface {
 	ListRaces(ctx context.Context, in *ListRacesRequest, opts ...grpc.CallOption) (*ListRacesResponse, error)
 	// GetRace returns a single race by ID
 	GetRace(ctx context.Context, in *GetRaceRequest, opts ...grpc.CallOption) (*GetRaceResponse, error)
-	// CreateRace creates a new race and returns it's ID.
-	CreateRace(ctx context.Context, in *CreateRaceRequest, opts ...grpc.CallOption) (*CreateRaceResponse, error)
 }
 
 type racingClient struct {
@@ -64,16 +61,6 @@ func (c *racingClient) GetRace(ctx context.Context, in *GetRaceRequest, opts ...
 	return out, nil
 }
 
-func (c *racingClient) CreateRace(ctx context.Context, in *CreateRaceRequest, opts ...grpc.CallOption) (*CreateRaceResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CreateRaceResponse)
-	err := c.cc.Invoke(ctx, Racing_CreateRace_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // RacingServer is the server API for Racing service.
 // All implementations must embed UnimplementedRacingServer
 // for forward compatibility.
@@ -82,8 +69,6 @@ type RacingServer interface {
 	ListRaces(context.Context, *ListRacesRequest) (*ListRacesResponse, error)
 	// GetRace returns a single race by ID
 	GetRace(context.Context, *GetRaceRequest) (*GetRaceResponse, error)
-	// CreateRace creates a new race and returns it's ID.
-	CreateRace(context.Context, *CreateRaceRequest) (*CreateRaceResponse, error)
 	mustEmbedUnimplementedRacingServer()
 }
 
@@ -99,9 +84,6 @@ func (UnimplementedRacingServer) ListRaces(context.Context, *ListRacesRequest) (
 }
 func (UnimplementedRacingServer) GetRace(context.Context, *GetRaceRequest) (*GetRaceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRace not implemented")
-}
-func (UnimplementedRacingServer) CreateRace(context.Context, *CreateRaceRequest) (*CreateRaceResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateRace not implemented")
 }
 func (UnimplementedRacingServer) mustEmbedUnimplementedRacingServer() {}
 func (UnimplementedRacingServer) testEmbeddedByValue()                {}
@@ -160,24 +142,6 @@ func _Racing_GetRace_Handler(srv interface{}, ctx context.Context, dec func(inte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Racing_CreateRace_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateRaceRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RacingServer).CreateRace(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Racing_CreateRace_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RacingServer).CreateRace(ctx, req.(*CreateRaceRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // Racing_ServiceDesc is the grpc.ServiceDesc for Racing service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -193,11 +157,7 @@ var Racing_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "GetRace",
 			Handler:    _Racing_GetRace_Handler,
 		},
-		{
-			MethodName: "CreateRace",
-			Handler:    _Racing_CreateRace_Handler,
-		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "racing.proto",
+	Metadata: "racing/racing.proto",
 }

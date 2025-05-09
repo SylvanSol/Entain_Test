@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package sports;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/SylvanSol/Entain_Test/sports/proto/sports";
+
+message Event {
+  int64 id = 1;
+  string name = 2;
+  string location = 3;
+  google.protobuf.Timestamp advertised_start_time = 4;
+}
+
+message ListEventsRequest {}
+
+message ListEventsResponse {
+  repeated Event events = 1;
+}
+
+service Sports {
+  rpc ListEvents (ListEventsRequest) returns (ListEventsResponse);
+}
