@@ -10,14 +10,13 @@ service Racing {
   rpc ListRaces(ListRacesRequest) returns (ListRacesResponse) {}
   // GetRace returns a single race by ID
   rpc GetRace(GetRaceRequest) returns (GetRaceResponse);
-  // CreateRace creates a new race and returns it's ID.
-  rpc CreateRace(CreateRaceRequest) returns (CreateRaceResponse);
 }
 
 /* Requests/Responses */
 
 message ListRacesRequest {
   ListRacesRequestFilter filter = 1;
+  Sort sort = 2;
 }
 
 // Derive this based on advertised_start_time (past ⇒ CLOSED, future ⇒ OPEN).
@@ -37,7 +36,12 @@ message ListRacesRequestFilter {
   repeated int64 meeting_ids = 1;
   // Add Visibility Filter
   bool only_visible = 2; // If true only returns races where visible = true
-  optional string order_by = 3;   // If not set, defaults to ordering by advertised_start_time
+}
+
+//Filter for listing races.
+message Sort {
+  string field = 1; //e.g "name", "number"
+  string direction = 2; //e.g "asc" or "desc"
 }
 
 /* Resources */
@@ -69,17 +73,3 @@ message Race {
   message GetRaceResponse {
     Race race = 1;
   }
-
-// Request to create a new Race.
-message CreateRaceRequest {
-  int64 meeting_id = 1;
-  string name = 2;
-  int64 number = 3;
-  bool visible = 4;
-  google.protobuf.Timestamp advertised_start_time = 5;
-}
-
-// Response contains the new Race ID.
-message CreateRaceResponse {
-  int64 id = 1;
-}

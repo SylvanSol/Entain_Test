@@ -18,10 +18,9 @@ type RacesRepo interface {
 	Init() error
 
 	// List will return a list of races.
-	List(filter *racing.ListRacesRequestFilter) ([]*racing.Race, error)
+	List(filter *racing.ListRacesRequestFilter, sortField, sortDirection string) ([]*racing.Race, error)
 
-	// Create will insert a new race and return  its newly-assigned ID.
-	Create(race *racing.Race) (int64, error)
+	GetByID(id int64) (*racing.Race, error)
 }
 
 type racesRepo struct {
@@ -46,7 +45,7 @@ func (r *racesRepo) Init() error {
 	return err
 }
 
-func (r *racesRepo) List(filter *racing.ListRacesRequestFilter) ([]*racing.Race, error) {
+func (r *racesRepo) List(filter *racing.ListRacesRequestFilter, sortField, sortDirection string) ([]*racing.Race, error) {
 	var (
 		err   error
 		query string
@@ -55,7 +54,7 @@ func (r *racesRepo) List(filter *racing.ListRacesRequestFilter) ([]*racing.Race,
 
 	query = getRaceQueries()[racesList]
 
-	query, args = r.applyFilter(query, filter)
+	query, args = r.applyFilter(query, filter, sortField, sortDirection)
 
 	rows, err := r.db.Query(query, args...)
 	if err != nil {
@@ -65,7 +64,7 @@ func (r *racesRepo) List(filter *racing.ListRacesRequestFilter) ([]*racing.Race,
 	return r.scanRaces(rows)
 }
 
-func (r *racesRepo) applyFilter(query string, filter *racing.ListRacesRequestFilter) (string, []interface{}) {
+func (r *racesRepo) applyFilter(query string, filter *racing.ListRacesRequestFilter, sortField, sortDirection string) (string, []interface{}) {
 	var (
 		clauses []string
 		args    []interface{}
@@ -97,12 +96,25 @@ func (r *racesRepo) applyFilter(query string, filter *racing.ListRacesRequestFil
 		query += " WHERE " + strings.Join(clauses, " AND ")
 	}
 
-	// Default ordering by advertised_start_time; allow override if provided
-	orderClause := " ORDER BY advertised_start_time"
-	if filter.OrderBy != nil && *filter.OrderBy != "" {
-		orderClause = " ORDER BY " + *filter.OrderBy
+	// Allowed fields for sorting
+	allowedOrderFields := map[string]bool{
+		"advertised_start_time": true,
+		"name":                  true,
+		"number":                true,
 	}
-	query += orderClause
+
+	// Validate and default sortField
+	if !allowedOrderFields[sortField] {
+		sortField = "advertised_start_time"
+	}
+
+	// Validate and default sortDirection
+	sortDirection = strings.ToUpper(sortDirection)
+	if sortDirection != "DESC" {
+		sortDirection = "ASC"
+	}
+
+	query += " ORDER BY " + sortField + " " + sortDirection
 
 	return query, args
 }
@@ -175,14 +187,4 @@ func (r *racesRepo) GetByID(id int64) (*racing.Race, error) {
 	}
 
 	return &race, nil
-}
-
-// Create inserts a new race and returns its newly-assigned ID.
-func (r *racesRepo) Create(race *racing.Race) (int64, error) {
-	res, err := r.db.Exec(`
-        INSERT INTO races(meeting_id, name, number, visible, advertised_start_time) VALUES (?, ?, ?, ?, ?)`, race.MeetingId, race.Name, race.Number, race.Visible, race.AdvertisedStartTime.AsTime())
-	if err != nil {
-		return 0, err
-	}
-	return res.LastInsertId()
 }

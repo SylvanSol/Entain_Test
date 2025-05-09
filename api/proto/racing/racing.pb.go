@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.6
 // 	protoc        v6.30.2
-// source: racing.proto
+// source: racing/racing.proto
 
 package racing
 
@@ -57,11 +57,11 @@ func (x RaceStatus) String() string {
 }
 
 func (RaceStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_racing_proto_enumTypes[0].Descriptor()
+	return file_racing_racing_proto_enumTypes[0].Descriptor()
 }
 
 func (RaceStatus) Type() protoreflect.EnumType {
-	return &file_racing_proto_enumTypes[0]
+	return &file_racing_racing_proto_enumTypes[0]
 }
 
 func (x RaceStatus) Number() protoreflect.EnumNumber {
@@ -70,20 +70,21 @@ func (x RaceStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use RaceStatus.Descriptor instead.
 func (RaceStatus) EnumDescriptor() ([]byte, []int) {
-	return file_racing_proto_rawDescGZIP(), []int{0}
+	return file_racing_racing_proto_rawDescGZIP(), []int{0}
 }
 
 // Request for ListRaces call.
 type ListRacesRequest struct {
 	state         protoimpl.MessageState  `protogen:"open.v1"`
 	Filter        *ListRacesRequestFilter `protobuf:"bytes,1,opt,name=filter,proto3" json:"filter,omitempty"`
+	Sort          *Sort                   `protobuf:"bytes,2,opt,name=sort,proto3" json:"sort,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ListRacesRequest) Reset() {
 	*x = ListRacesRequest{}
-	mi := &file_racing_proto_msgTypes[0]
+	mi := &file_racing_racing_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -95,7 +96,7 @@ func (x *ListRacesRequest) String() string {
 func (*ListRacesRequest) ProtoMessage() {}
 
 func (x *ListRacesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_racing_proto_msgTypes[0]
+	mi := &file_racing_racing_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -108,12 +109,19 @@ func (x *ListRacesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListRacesRequest.ProtoReflect.Descriptor instead.
 func (*ListRacesRequest) Descriptor() ([]byte, []int) {
-	return file_racing_proto_rawDescGZIP(), []int{0}
+	return file_racing_racing_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *ListRacesRequest) GetFilter() *ListRacesRequestFilter {
 	if x != nil {
 		return x.Filter
+	}
+	return nil
+}
+
+func (x *ListRacesRequest) GetSort() *Sort {
+	if x != nil {
+		return x.Sort
 	}
 	return nil
 }
@@ -128,7 +136,7 @@ type ListRacesResponse struct {
 
 func (x *ListRacesResponse) Reset() {
 	*x = ListRacesResponse{}
-	mi := &file_racing_proto_msgTypes[1]
+	mi := &file_racing_racing_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -140,7 +148,7 @@ func (x *ListRacesResponse) String() string {
 func (*ListRacesResponse) ProtoMessage() {}
 
 func (x *ListRacesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_racing_proto_msgTypes[1]
+	mi := &file_racing_racing_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -153,7 +161,7 @@ func (x *ListRacesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListRacesResponse.ProtoReflect.Descriptor instead.
 func (*ListRacesResponse) Descriptor() ([]byte, []int) {
-	return file_racing_proto_rawDescGZIP(), []int{1}
+	return file_racing_racing_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *ListRacesResponse) GetRaces() []*Race {
@@ -168,15 +176,14 @@ type ListRacesRequestFilter struct {
 	state      protoimpl.MessageState `protogen:"open.v1"`
 	MeetingIds []int64                `protobuf:"varint,1,rep,packed,name=meeting_ids,json=meetingIds,proto3" json:"meeting_ids,omitempty"`
 	// Add Visibility Filter
-	OnlyVisible   bool    `protobuf:"varint,2,opt,name=only_visible,json=onlyVisible,proto3" json:"only_visible,omitempty"` // If true only returns races where visible = true
-	OrderBy       *string `protobuf:"bytes,3,opt,name=order_by,json=orderBy,proto3,oneof" json:"order_by,omitempty"`        // If not set, defaults to ordering by advertised_start_time
+	OnlyVisible   bool `protobuf:"varint,2,opt,name=only_visible,json=onlyVisible,proto3" json:"only_visible,omitempty"` // If true only returns races where visible = true
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ListRacesRequestFilter) Reset() {
 	*x = ListRacesRequestFilter{}
-	mi := &file_racing_proto_msgTypes[2]
+	mi := &file_racing_racing_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -188,7 +195,7 @@ func (x *ListRacesRequestFilter) String() string {
 func (*ListRacesRequestFilter) ProtoMessage() {}
 
 func (x *ListRacesRequestFilter) ProtoReflect() protoreflect.Message {
-	mi := &file_racing_proto_msgTypes[2]
+	mi := &file_racing_racing_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -201,7 +208,7 @@ func (x *ListRacesRequestFilter) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListRacesRequestFilter.ProtoReflect.Descriptor instead.
 func (*ListRacesRequestFilter) Descriptor() ([]byte, []int) {
-	return file_racing_proto_rawDescGZIP(), []int{2}
+	return file_racing_racing_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *ListRacesRequestFilter) GetMeetingIds() []int64 {
@@ -218,9 +225,55 @@ func (x *ListRacesRequestFilter) GetOnlyVisible() bool {
 	return false
 }
 
-func (x *ListRacesRequestFilter) GetOrderBy() string {
-	if x != nil && x.OrderBy != nil {
-		return *x.OrderBy
+// Filter for listing races.
+type Sort struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Field         string                 `protobuf:"bytes,1,opt,name=field,proto3" json:"field,omitempty"`         //e.g "name", "number"
+	Direction     string                 `protobuf:"bytes,2,opt,name=direction,proto3" json:"direction,omitempty"` //e.g "asc" or "desc"
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Sort) Reset() {
+	*x = Sort{}
+	mi := &file_racing_racing_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Sort) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Sort) ProtoMessage() {}
+
+func (x *Sort) ProtoReflect() protoreflect.Message {
+	mi := &file_racing_racing_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Sort.ProtoReflect.Descriptor instead.
+func (*Sort) Descriptor() ([]byte, []int) {
+	return file_racing_racing_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *Sort) GetField() string {
+	if x != nil {
+		return x.Field
+	}
+	return ""
+}
+
+func (x *Sort) GetDirection() string {
+	if x != nil {
+		return x.Direction
 	}
 	return ""
 }
@@ -248,7 +301,7 @@ type Race struct {
 
 func (x *Race) Reset() {
 	*x = Race{}
-	mi := &file_racing_proto_msgTypes[3]
+	mi := &file_racing_racing_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -260,7 +313,7 @@ func (x *Race) String() string {
 func (*Race) ProtoMessage() {}
 
 func (x *Race) ProtoReflect() protoreflect.Message {
-	mi := &file_racing_proto_msgTypes[3]
+	mi := &file_racing_racing_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -273,7 +326,7 @@ func (x *Race) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Race.ProtoReflect.Descriptor instead.
 func (*Race) Descriptor() ([]byte, []int) {
-	return file_racing_proto_rawDescGZIP(), []int{3}
+	return file_racing_racing_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *Race) GetId() int64 {
@@ -335,7 +388,7 @@ type GetRaceRequest struct {
 
 func (x *GetRaceRequest) Reset() {
 	*x = GetRaceRequest{}
-	mi := &file_racing_proto_msgTypes[4]
+	mi := &file_racing_racing_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -347,7 +400,7 @@ func (x *GetRaceRequest) String() string {
 func (*GetRaceRequest) ProtoMessage() {}
 
 func (x *GetRaceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_racing_proto_msgTypes[4]
+	mi := &file_racing_racing_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -360,7 +413,7 @@ func (x *GetRaceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetRaceRequest.ProtoReflect.Descriptor instead.
 func (*GetRaceRequest) Descriptor() ([]byte, []int) {
-	return file_racing_proto_rawDescGZIP(), []int{4}
+	return file_racing_racing_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *GetRaceRequest) GetId() int64 {
@@ -380,7 +433,7 @@ type GetRaceResponse struct {
 
 func (x *GetRaceResponse) Reset() {
 	*x = GetRaceResponse{}
-	mi := &file_racing_proto_msgTypes[5]
+	mi := &file_racing_racing_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -392,7 +445,7 @@ func (x *GetRaceResponse) String() string {
 func (*GetRaceResponse) ProtoMessage() {}
 
 func (x *GetRaceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_racing_proto_msgTypes[5]
+	mi := &file_racing_racing_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -405,7 +458,7 @@ func (x *GetRaceResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetRaceResponse.ProtoReflect.Descriptor instead.
 func (*GetRaceResponse) Descriptor() ([]byte, []int) {
-	return file_racing_proto_rawDescGZIP(), []int{5}
+	return file_racing_racing_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *GetRaceResponse) GetRace() *Race {
@@ -415,143 +468,23 @@ func (x *GetRaceResponse) GetRace() *Race {
 	return nil
 }
 
-// Request to create a new Race.
-type CreateRaceRequest struct {
-	state               protoimpl.MessageState `protogen:"open.v1"`
-	MeetingId           int64                  `protobuf:"varint,1,opt,name=meeting_id,json=meetingId,proto3" json:"meeting_id,omitempty"`
-	Name                string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Number              int64                  `protobuf:"varint,3,opt,name=number,proto3" json:"number,omitempty"`
-	Visible             bool                   `protobuf:"varint,4,opt,name=visible,proto3" json:"visible,omitempty"`
-	AdvertisedStartTime *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=advertised_start_time,json=advertisedStartTime,proto3" json:"advertised_start_time,omitempty"`
-	unknownFields       protoimpl.UnknownFields
-	sizeCache           protoimpl.SizeCache
-}
+var File_racing_racing_proto protoreflect.FileDescriptor
 
-func (x *CreateRaceRequest) Reset() {
-	*x = CreateRaceRequest{}
-	mi := &file_racing_proto_msgTypes[6]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CreateRaceRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateRaceRequest) ProtoMessage() {}
-
-func (x *CreateRaceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_racing_proto_msgTypes[6]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CreateRaceRequest.ProtoReflect.Descriptor instead.
-func (*CreateRaceRequest) Descriptor() ([]byte, []int) {
-	return file_racing_proto_rawDescGZIP(), []int{6}
-}
-
-func (x *CreateRaceRequest) GetMeetingId() int64 {
-	if x != nil {
-		return x.MeetingId
-	}
-	return 0
-}
-
-func (x *CreateRaceRequest) GetName() string {
-	if x != nil {
-		return x.Name
-	}
-	return ""
-}
-
-func (x *CreateRaceRequest) GetNumber() int64 {
-	if x != nil {
-		return x.Number
-	}
-	return 0
-}
-
-func (x *CreateRaceRequest) GetVisible() bool {
-	if x != nil {
-		return x.Visible
-	}
-	return false
-}
-
-func (x *CreateRaceRequest) GetAdvertisedStartTime() *timestamppb.Timestamp {
-	if x != nil {
-		return x.AdvertisedStartTime
-	}
-	return nil
-}
-
-// Response contains the new Race ID.
-type CreateRaceResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *CreateRaceResponse) Reset() {
-	*x = CreateRaceResponse{}
-	mi := &file_racing_proto_msgTypes[7]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CreateRaceResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateRaceResponse) ProtoMessage() {}
-
-func (x *CreateRaceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_racing_proto_msgTypes[7]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CreateRaceResponse.ProtoReflect.Descriptor instead.
-func (*CreateRaceResponse) Descriptor() ([]byte, []int) {
-	return file_racing_proto_rawDescGZIP(), []int{7}
-}
-
-func (x *CreateRaceResponse) GetId() int64 {
-	if x != nil {
-		return x.Id
-	}
-	return 0
-}
-
-var File_racing_proto protoreflect.FileDescriptor
-
-const file_racing_proto_rawDesc = "" +
+const file_racing_racing_proto_rawDesc = "" +
 	"\n" +
-	"\fracing.proto\x12\x06racing\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1cgoogle/api/annotations.proto\"J\n" +
+	"\x13racing/racing.proto\x12\x06racing\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1cgoogle/api/annotations.proto\"l\n" +
 	"\x10ListRacesRequest\x126\n" +
-	"\x06filter\x18\x01 \x01(\v2\x1e.racing.ListRacesRequestFilterR\x06filter\"7\n" +
+	"\x06filter\x18\x01 \x01(\v2\x1e.racing.ListRacesRequestFilterR\x06filter\x12 \n" +
+	"\x04sort\x18\x02 \x01(\v2\f.racing.SortR\x04sort\"7\n" +
 	"\x11ListRacesResponse\x12\"\n" +
-	"\x05races\x18\x01 \x03(\v2\f.racing.RaceR\x05races\"\x89\x01\n" +
+	"\x05races\x18\x01 \x03(\v2\f.racing.RaceR\x05races\"\\\n" +
 	"\x16ListRacesRequestFilter\x12\x1f\n" +
 	"\vmeeting_ids\x18\x01 \x03(\x03R\n" +
 	"meetingIds\x12!\n" +
-	"\fonly_visible\x18\x02 \x01(\bR\vonlyVisible\x12\x1e\n" +
-	"\border_by\x18\x03 \x01(\tH\x00R\aorderBy\x88\x01\x01B\v\n" +
-	"\t_order_by\"\xf7\x01\n" +
+	"\fonly_visible\x18\x02 \x01(\bR\vonlyVisible\":\n" +
+	"\x04Sort\x12\x14\n" +
+	"\x05field\x18\x01 \x01(\tR\x05field\x12\x1c\n" +
+	"\tdirection\x18\x02 \x01(\tR\tdirection\"\xf7\x01\n" +
 	"\x04Race\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +
@@ -564,96 +497,81 @@ const file_racing_proto_rawDesc = "" +
 	"\x0eGetRaceRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"3\n" +
 	"\x0fGetRaceResponse\x12 \n" +
-	"\x04race\x18\x01 \x01(\v2\f.racing.RaceR\x04race\"\xc8\x01\n" +
-	"\x11CreateRaceRequest\x12\x1d\n" +
-	"\n" +
-	"meeting_id\x18\x01 \x01(\x03R\tmeetingId\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name\x12\x16\n" +
-	"\x06number\x18\x03 \x01(\x03R\x06number\x12\x18\n" +
-	"\avisible\x18\x04 \x01(\bR\avisible\x12N\n" +
-	"\x15advertised_start_time\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\x13advertisedStartTime\"$\n" +
-	"\x12CreateRaceResponse\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id*3\n" +
+	"\x04race\x18\x01 \x01(\v2\f.racing.RaceR\x04race*3\n" +
 	"\n" +
 	"RaceStatus\x12\x0f\n" +
 	"\vUNSPECIFIED\x10\x00\x12\b\n" +
 	"\x04OPEN\x10\x01\x12\n" +
 	"\n" +
-	"\x06CLOSED\x10\x022\xe6\x01\n" +
+	"\x06CLOSED\x10\x022\xa1\x01\n" +
 	"\x06Racing\x12[\n" +
 	"\tListRaces\x12\x18.racing.ListRacesRequest\x1a\x19.racing.ListRacesResponse\"\x19\x82\xd3\xe4\x93\x02\x13:\x01*\"\x0e/v1/list-races\x12:\n" +
-	"\aGetRace\x12\x16.racing.GetRaceRequest\x1a\x17.racing.GetRaceResponse\x12C\n" +
-	"\n" +
-	"CreateRace\x12\x19.racing.CreateRaceRequest\x1a\x1a.racing.CreateRaceResponseB\tZ\a/racingb\x06proto3"
+	"\aGetRace\x12\x16.racing.GetRaceRequest\x1a\x17.racing.GetRaceResponseB\tZ\a/racingb\x06proto3"
 
 var (
-	file_racing_proto_rawDescOnce sync.Once
-	file_racing_proto_rawDescData []byte
+	file_racing_racing_proto_rawDescOnce sync.Once
+	file_racing_racing_proto_rawDescData []byte
 )
 
-func file_racing_proto_rawDescGZIP() []byte {
-	file_racing_proto_rawDescOnce.Do(func() {
-		file_racing_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_racing_proto_rawDesc), len(file_racing_proto_rawDesc)))
+func file_racing_racing_proto_rawDescGZIP() []byte {
+	file_racing_racing_proto_rawDescOnce.Do(func() {
+		file_racing_racing_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_racing_racing_proto_rawDesc), len(file_racing_racing_proto_rawDesc)))
 	})
-	return file_racing_proto_rawDescData
+	return file_racing_racing_proto_rawDescData
 }
 
-var file_racing_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_racing_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
-var file_racing_proto_goTypes = []any{
+var file_racing_racing_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_racing_racing_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_racing_racing_proto_goTypes = []any{
 	(RaceStatus)(0),                // 0: racing.RaceStatus
 	(*ListRacesRequest)(nil),       // 1: racing.ListRacesRequest
 	(*ListRacesResponse)(nil),      // 2: racing.ListRacesResponse
 	(*ListRacesRequestFilter)(nil), // 3: racing.ListRacesRequestFilter
-	(*Race)(nil),                   // 4: racing.Race
-	(*GetRaceRequest)(nil),         // 5: racing.GetRaceRequest
-	(*GetRaceResponse)(nil),        // 6: racing.GetRaceResponse
-	(*CreateRaceRequest)(nil),      // 7: racing.CreateRaceRequest
-	(*CreateRaceResponse)(nil),     // 8: racing.CreateRaceResponse
-	(*timestamppb.Timestamp)(nil),  // 9: google.protobuf.Timestamp
+	(*Sort)(nil),                   // 4: racing.Sort
+	(*Race)(nil),                   // 5: racing.Race
+	(*GetRaceRequest)(nil),         // 6: racing.GetRaceRequest
+	(*GetRaceResponse)(nil),        // 7: racing.GetRaceResponse
+	(*timestamppb.Timestamp)(nil),  // 8: google.protobuf.Timestamp
 }
-var file_racing_proto_depIdxs = []int32{
+var file_racing_racing_proto_depIdxs = []int32{
 	3, // 0: racing.ListRacesRequest.filter:type_name -> racing.ListRacesRequestFilter
-	4, // 1: racing.ListRacesResponse.races:type_name -> racing.Race
-	9, // 2: racing.Race.advertised_start_time:type_name -> google.protobuf.Timestamp
-	0, // 3: racing.Race.status:type_name -> racing.RaceStatus
-	4, // 4: racing.GetRaceResponse.race:type_name -> racing.Race
-	9, // 5: racing.CreateRaceRequest.advertised_start_time:type_name -> google.protobuf.Timestamp
+	4, // 1: racing.ListRacesRequest.sort:type_name -> racing.Sort
+	5, // 2: racing.ListRacesResponse.races:type_name -> racing.Race
+	8, // 3: racing.Race.advertised_start_time:type_name -> google.protobuf.Timestamp
+	0, // 4: racing.Race.status:type_name -> racing.RaceStatus
+	5, // 5: racing.GetRaceResponse.race:type_name -> racing.Race
 	1, // 6: racing.Racing.ListRaces:input_type -> racing.ListRacesRequest
-	5, // 7: racing.Racing.GetRace:input_type -> racing.GetRaceRequest
-	7, // 8: racing.Racing.CreateRace:input_type -> racing.CreateRaceRequest
-	2, // 9: racing.Racing.ListRaces:output_type -> racing.ListRacesResponse
-	6, // 10: racing.Racing.GetRace:output_type -> racing.GetRaceResponse
-	8, // 11: racing.Racing.CreateRace:output_type -> racing.CreateRaceResponse
-	9, // [9:12] is the sub-list for method output_type
-	6, // [6:9] is the sub-list for method input_type
+	6, // 7: racing.Racing.GetRace:input_type -> racing.GetRaceRequest
+	2, // 8: racing.Racing.ListRaces:output_type -> racing.ListRacesResponse
+	7, // 9: racing.Racing.GetRace:output_type -> racing.GetRaceResponse
+	8, // [8:10] is the sub-list for method output_type
+	6, // [6:8] is the sub-list for method input_type
 	6, // [6:6] is the sub-list for extension type_name
 	6, // [6:6] is the sub-list for extension extendee
 	0, // [0:6] is the sub-list for field type_name
 }
 
-func init() { file_racing_proto_init() }
-func file_racing_proto_init() {
-	if File_racing_proto != nil {
+func init() { file_racing_racing_proto_init() }
+func file_racing_racing_proto_init() {
+	if File_racing_racing_proto != nil {
 		return
 	}
-	file_racing_proto_msgTypes[2].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_racing_proto_rawDesc), len(file_racing_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_racing_racing_proto_rawDesc), len(file_racing_racing_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   8,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_racing_proto_goTypes,
-		DependencyIndexes: file_racing_proto_depIdxs,
-		EnumInfos:         file_racing_proto_enumTypes,
-		MessageInfos:      file_racing_proto_msgTypes,
+		GoTypes:           file_racing_racing_proto_goTypes,
+		DependencyIndexes: file_racing_racing_proto_depIdxs,
+		EnumInfos:         file_racing_racing_proto_enumTypes,
+		MessageInfos:      file_racing_racing_proto_msgTypes,
 	}.Build()
-	File_racing_proto = out.File
-	file_racing_proto_goTypes = nil
-	file_racing_proto_depIdxs = nil
+	File_racing_racing_proto = out.File
+	file_racing_racing_proto_goTypes = nil
+	file_racing_racing_proto_depIdxs = nil
 }

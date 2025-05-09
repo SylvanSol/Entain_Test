@@ -1,5 +1,8 @@
 package db
 
+//"fmt"
+//"strings"
+
 const (
 	racesList = "list"
 )
