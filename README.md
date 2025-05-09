@@ -100,7 +100,7 @@ Entain_Test/
 - **Proto:** added `bool only_visible = 2` to `ListRacesRequestFilter`.  
 - **DB repo:** `applyFilter` appends `visible = 1` when `only_visible` is true.
 
-#### Exwample Request
+#### Example Request
 ```
 curl -X POST http://localhost:8000/v1/list-races \
   -H 'Content-Type: application/json' \
@@ -114,6 +114,17 @@ curl -X POST http://localhost:8000/v1/list-races \
 - **Proto:** added `optional string order_by = 3` to `ListRacesRequestFilter`.  
 - **DB repo:** `applyFilter` now appends `ORDER BY advertised_start_time` or custom column.
 
+#### Example Request
+```
+curl -X POST http://localhost:8000/v1/list-races \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "filter": {
+      "order_by": "name",
+      "sort_direction": "desc"
+    }
+  }'
+```
 ### Task 3: Derived `status` Field
 - **Proto:** added
   ```proto

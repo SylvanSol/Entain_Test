@@ -28,7 +28,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type RacingClient interface {
-	// ListRaces will return a collection of all races.
+	// ListRaces returns a list of all races.
 	ListRaces(ctx context.Context, in *ListRacesRequest, opts ...grpc.CallOption) (*ListRacesResponse, error)
 	// GetRace returns a single race by ID
 	GetRace(ctx context.Context, in *GetRaceRequest, opts ...grpc.CallOption) (*GetRaceResponse, error)
@@ -75,18 +75,19 @@ func (c *racingClient) CreateRace(ctx context.Context, in *CreateRaceRequest, op
 }
 
 // RacingServer is the server API for Racing service.
-// All implementations should embed UnimplementedRacingServer
+// All implementations must embed UnimplementedRacingServer
 // for forward compatibility.
 type RacingServer interface {
-	// ListRaces will return a collection of all races.
+	// ListRaces returns a list of all races.
 	ListRaces(context.Context, *ListRacesRequest) (*ListRacesResponse, error)
 	// GetRace returns a single race by ID
 	GetRace(context.Context, *GetRaceRequest) (*GetRaceResponse, error)
 	// CreateRace creates a new race and returns it's ID.
 	CreateRace(context.Context, *CreateRaceRequest) (*CreateRaceResponse, error)
+	mustEmbedUnimplementedRacingServer()
 }
 
-// UnimplementedRacingServer should be embedded to have
+// UnimplementedRacingServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
@@ -102,7 +103,8 @@ func (UnimplementedRacingServer) GetRace(context.Context, *GetRaceRequest) (*Get
 func (UnimplementedRacingServer) CreateRace(context.Context, *CreateRaceRequest) (*CreateRaceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateRace not implemented")
 }
-func (UnimplementedRacingServer) testEmbeddedByValue() {}
+func (UnimplementedRacingServer) mustEmbedUnimplementedRacingServer() {}
+func (UnimplementedRacingServer) testEmbeddedByValue()                {}
 
 // UnsafeRacingServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to RacingServer will

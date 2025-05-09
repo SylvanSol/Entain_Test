@@ -7,6 +7,7 @@
 package racing
 
 import (
+	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
@@ -72,6 +73,7 @@ func (RaceStatus) EnumDescriptor() ([]byte, []int) {
 	return file_racing_racing_proto_rawDescGZIP(), []int{0}
 }
 
+// Request for ListRaces call.
 type ListRacesRequest struct {
 	state         protoimpl.MessageState  `protogen:"open.v1"`
 	Filter        *ListRacesRequestFilter `protobuf:"bytes,1,opt,name=filter,proto3" json:"filter,omitempty"`
@@ -592,7 +594,7 @@ var File_racing_racing_proto protoreflect.FileDescriptor
 
 const file_racing_racing_proto_rawDesc = "" +
 	"\n" +
-	"\x13racing/racing.proto\x12\x06racing\x1a\x1fgoogle/protobuf/timestamp.proto\"l\n" +
+	"\x13racing/racing.proto\x12\x06racing\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1cgoogle/api/annotations.proto\"l\n" +
 	"\x10ListRacesRequest\x126\n" +
 	"\x06filter\x18\x01 \x01(\v2\x1e.racing.ListRacesRequestFilterR\x06filter\x12 \n" +
 	"\x04sort\x18\x02 \x01(\v2\f.racing.SortR\x04sort\"7\n" +
@@ -632,9 +634,9 @@ const file_racing_racing_proto_rawDesc = "" +
 	"\vUNSPECIFIED\x10\x00\x12\b\n" +
 	"\x04OPEN\x10\x01\x12\n" +
 	"\n" +
-	"\x06CLOSED\x10\x022\xcd\x01\n" +
-	"\x06Racing\x12B\n" +
-	"\tListRaces\x12\x18.racing.ListRacesRequest\x1a\x19.racing.ListRacesResponse\"\x00\x12:\n" +
+	"\x06CLOSED\x10\x022\xe6\x01\n" +
+	"\x06Racing\x12[\n" +
+	"\tListRaces\x12\x18.racing.ListRacesRequest\x1a\x19.racing.ListRacesResponse\"\x19\x82\xd3\xe4\x93\x02\x13:\x01*\"\x0e/v1/list-races\x12:\n" +
 	"\aGetRace\x12\x16.racing.GetRaceRequest\x1a\x17.racing.GetRaceResponse\x12C\n" +
 	"\n" +
 	"CreateRace\x12\x19.racing.CreateRaceRequest\x1a\x1a.racing.CreateRaceResponseB\tZ\a/racingb\x06proto3"
