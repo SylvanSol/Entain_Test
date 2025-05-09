@@ -189,3 +189,43 @@ func TestListRaces_Status(t *testing.T) {
 	assert.True(t, foundPast, "did not find race 301 (past)")
 	assert.True(t, foundFuture, "did not find race 302 (future)")
 }
+
+func TestGetByID(t *testing.T) {
+	sqldb := setupTestDB(t)
+	defer sqldb.Close()
+
+	// Create races table
+	_, err := sqldb.Exec(`
+		CREATE TABLE races (
+			id INTEGER PRIMARY KEY,
+			meeting_id INTEGER,
+			name TEXT,
+			number INTEGER,
+			visible INTEGER,
+			advertised_start_time DATETIME
+		)
+	`)
+	assert.NoError(t, err)
+
+	// Insert one test race
+	now := time.Now().Format(time.RFC3339)
+	_, err = sqldb.Exec(`
+		INSERT INTO races(id, meeting_id, name, number, visible, advertised_start_time)
+		VALUES (?, ?, ?, ?, ?, ?)
+	`, 500, 2, "Solo Race", 5, 1, now)
+	assert.NoError(t, err)
+
+	// Create repo and fetch the race
+	repo := NewRacesRepo(sqldb)
+	race, err := repo.GetByID(500)
+	assert.NoError(t, err, "GetByID should not return an error")
+	assert.NotNil(t, race, "race should not be nil")
+	assert.Equal(t, int64(500), race.Id)
+	assert.Equal(t, "Solo Race", race.Name)
+	assert.Equal(t, int64(2), race.MeetingId)
+	assert.Equal(t, int32(5), race.Number)
+	assert.Equal(t, true, race.Visible)
+
+	// Check derived status (should be OPEN)
+	assert.Equal(t, racing.RaceStatus_OPEN, race.Status)
+}

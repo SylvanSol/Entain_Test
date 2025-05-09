@@ -13,7 +13,7 @@ Recent modifications include:
 2. **Ordering** support via an `order_by` field.  
 3. **Derived `status`** on each `Race` (OPEN/CLOSED based on time).  
 4. **Attempted “GetRaceById”** RPC—currently incomplete due to import errors and time constraints.
-5. **“CreateRace”** RPC to add new races.
+5. To be made
 
 ---
 
@@ -36,7 +36,7 @@ Entain_Test/
 │  |  |  ├─ racing.proto                            # ← Service proto (no HTTP imports)
 │  |  ├─ racing.go           
 │  ├─ service/                                      
-│  |  ├─ racing.go                                  # ← Implements status and CreateRace
+│  |  ├─ racing.go                                  # ← Implements status
 │  ├─ go.mod
 │  ├─ main.go
 │  ├─ tools.go            
@@ -143,6 +143,7 @@ curl -X POST http://localhost:8000/v1/list-races \
   }
   ```
 #### Example Curl
+
 ```bash
 curl -X POST http://localhost:8000/v1/list-races \
   -H 'Content-Type: application/json' \
@@ -151,6 +152,7 @@ curl -X POST http://localhost:8000/v1/list-races \
   }'
 ```
 #### Example Response
+
 ```json
 {
   "races": [
@@ -170,67 +172,71 @@ curl -X POST http://localhost:8000/v1/list-races \
 }
 ```
 
-### Task 4: GetRaceById RPC (Incomplete)  
-- **Proto (service):** attempted to add:
+### Task 4: GetRaceById RPC
+* **Proto:** Added the following to `racing.proto`:
+
   ```proto
-  rpc GetRace(GetRaceRequest) returns (GetRaceResponse);
-  ```  
-  to `/racing/proto/racing.proto`.  
-- **Error encountered:**
-  ```
-  Import "google/api/annotations.proto" was not found or had errors.
-  Import "google/api/http.proto" was not found or had errors.
-  ```  
-  because the racing service proto should not include HTTP annotations.  
-- **Current status:** Task 4 could not be completed in time due to these import errors and the elapsed time since assignment.
-
-### Task 5: CreateRace RPC & “Add Race” Functionality  
-- **Proto:** in `/racing/proto/racing.proto` added:
-  ```proto
-  rpc CreateRace(CreateRaceRequest) returns (CreateRaceResponse);
-
-  message CreateRaceRequest {
-    int64 meeting_id             = 1;
-    string name                  = 2;
-    int64 number                 = 3;
-    bool visible                 = 4;
-    google.protobuf.Timestamp advertised_start_time = 5;
-  }
-
-  message CreateRaceResponse {
+  message GetRaceRequest {
     int64 id = 1;
   }
-  ```  
-- **Repository:** extended `RacesRepo` interface and `*racesRepo` with:
-  ```go
-  Create(race *racing.Race) (int64, error)
-  ```  
-  which INSERTs a new row and returns its auto-assigned ID.  
-- **Service:** implemented `CreateRace` in `service/racing.go`:
-  ```go
-  func (s *racingService) CreateRace(ctx context.Context, req *racing.CreateRaceRequest) (*racing.CreateRaceResponse, error) {
-    ts := timestamppb.New(req.AdvertisedStartTime.AsTime())
-    newRace := &racing.Race{
-      MeetingId:           req.MeetingId,
-      Name:                req.Name,
-      Number:              req.Number,
-      Visible:             req.Visible,
-      AdvertisedStartTime: req.AdvertisedStartTime,
-    }
-    id, err := s.racesRepo.Create(newRace)
-    if err != nil {
-      return nil, status.Errorf(codes.Internal, "failed to create race: %v", err)
-    }
-    return &racing.CreateRaceResponse{Id: id}, nil
-  }
-  ```  
-- **Tests:** `TestCreateRace` in `db/queries_test.go` verifies insertion and data round-trip.
 
+  message GetRaceResponse {
+    Race race = 1;
+  }
+
+  rpc GetRace(GetRaceRequest) returns (GetRaceResponse);
+  ```
+* **Interface & Repository:**
+
+  * Extended the `RacesRepo` interface with `GetByID(id int64) (*racing.Race, error)`.
+  * Reused the existing `GetByID` implementation in `races.go`.
+* **Service Layer:**
+
+  * Implemented `GetRace` in `racing/service/racing.go`, which returns:
+
+    * `NOT_FOUND` if the race doesn’t exist.
+    * `INTERNAL` on DB error.
+* **Tests:**
+
+  * Added `TestGetByID` in `queries_test.go` to verify:
+
+    * Correct field values.
+    * Derived `status` is set to `OPEN` or `CLOSED`.
+* **Note:**
+
+  * This RPC fetches a single race by ID.
+  * Status is always derived at runtime and returned with the race.
+
+#### Example Request (via curl)
+
+```bash
+curl -X POST http://localhost:8000/v1/get-race \
+  -H "Content-Type: application/json" \
+  -d '{
+    "id": 500
+  }'
+```
+
+#### Example Response
+
+```json
+{
+  "race": {
+    "id": 500,
+    "name": "Solo Race",
+    "advertised_start_time": "2025-01-01T12:00:00Z",
+    "status": "OPEN"
+  }
+}
+```
+
+### Task 5: Create a sports service
+- To be completed
 ---
 
 ## Testing
 
-All implemented tests live in **racing/db/queries_test.go** (Tasks 1–3 covered). Task 4 and 5 been removed for now.
+All implemented tests live in **racing/db/queries_test.go** (Tasks 1–4 covered). Task 5 been removed for now.
 
 Run:
 ```bash
@@ -241,12 +247,7 @@ go test ./racing/db
 
 ## Known Issues & Future Steps
   
-- **Task 4 and 5 Incomplete:**  
-  GetRaceById RPC stubs in `racing/proto` fail to build due to inappropriate HTTP imports.  
-- **Next steps:**  
-  - Strip gateway annotations from service proto, regenerate, then implement the repo and service methods.  
-  - Add corresponding unit tests.  
-  - Implement additional RPCs (e.g. GetRaceById).
+- **Have not made task 5:**  
   - Do Task 5 properly
 
 ---

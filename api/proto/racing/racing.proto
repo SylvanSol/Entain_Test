@@ -77,17 +77,3 @@ message GetRaceRequest {
 message GetRaceResponse {
   Race race = 1;
 }
-
-// Request to create a new Race.
-message CreateRaceRequest {
-  int64 meeting_id = 1;
-  string name = 2;
-  int64 number = 3;
-  bool visible = 4;
-  google.protobuf.Timestamp advertised_start_time = 5;
-}
-
-// Response contains the new Race ID.
-message CreateRaceResponse {
-  int64 id = 1;
-}
