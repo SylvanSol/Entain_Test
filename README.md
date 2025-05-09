@@ -101,7 +101,7 @@ Entain_Test/
 - **DB repo:** `applyFilter` appends `visible = 1` when `only_visible` is true.
 
 #### Example Request
-```
+```bash
 curl -X POST http://localhost:8000/v1/list-races \
   -H 'Content-Type: application/json' \
   -d '{
@@ -115,15 +115,18 @@ curl -X POST http://localhost:8000/v1/list-races \
 - **DB repo:** `applyFilter` now appends `ORDER BY advertised_start_time` or custom column.
 
 #### Example Request
-```
+```bash
 curl -X POST http://localhost:8000/v1/list-races \
   -H 'Content-Type: application/json' \
   -d '{
     "filter": {
-      "order_by": "name",
-      "sort_direction": "desc"
-    }
-  }'
+      "only_visible": true
+    },
+    "sort": {
+      "field": "name",
+      "direction": "desc"
+     }
+}
 ```
 ### Task 3: Derived `status` Field
 - **Proto:** added
@@ -139,7 +142,33 @@ curl -X POST http://localhost:8000/v1/list-races \
     race.Status = racing.RaceStatus_OPEN
   }
   ```
-- **Tests:** new `TestListRaces_Status` in `db/queries_test.go` verifies CLOSED vs. OPEN.
+#### Example Curl
+```bash
+curl -X POST http://localhost:8000/v1/list-races \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "filter": {}
+  }'
+```
+#### Example Response
+```json
+{
+  "races": [
+    {
+      "id": 301,
+      "name": "Past Race",
+      "advertised_start_time": "2024-01-01T12:00:00Z",
+      "status": "CLOSED"
+    },
+    {
+      "id": 302,
+      "name": "Future Race",
+      "advertised_start_time": "2026-01-01T12:00:00Z",
+      "status": "OPEN"
+    }
+  ]
+}
+```
 
 ### Task 4: GetRaceById RPC (Incomplete)  
 - **Proto (service):** attempted to add:
@@ -201,7 +230,7 @@ curl -X POST http://localhost:8000/v1/list-races \
 
 ## Testing
 
-All implemented tests live in **racing/db/queries_test.go** (Tasks 1–3 covered). Task 4 and 5 have errors that cause them not to run
+All implemented tests live in **racing/db/queries_test.go** (Tasks 1–3 covered). Task 4 and 5 been removed for now.
 
 Run:
 ```bash
@@ -211,21 +240,14 @@ go test ./racing/db
 ---
 
 ## Known Issues & Future Steps
-
-- **Current Stuck Point:**  
-  The primary issue (missing method `mustEmbedUnimplementedRacingServer`) has been addressed by ensuring your service implementation exactly matches the generated interface. If the error persists, verify that only one version of the generated package is used throughout the project.
   
-- **Future Improvements:**  
-  - Add additional sorting options for the `ListRaces` RPC.
-  - Implement further endpoints, such as fetching a single race by ID and creating a separate Sports service.
-  - Improve unit and integration tests.
-  
-- **Task 4 Incomplete:**  
+- **Task 4 and 5 Incomplete:**  
   GetRaceById RPC stubs in `racing/proto` fail to build due to inappropriate HTTP imports.  
 - **Next steps:**  
   - Strip gateway annotations from service proto, regenerate, then implement the repo and service methods.  
   - Add corresponding unit tests.  
   - Implement additional RPCs (e.g. GetRaceById).
+  - Do Task 5 properly
 
 ---
 

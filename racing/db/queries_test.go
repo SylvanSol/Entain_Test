@@ -135,3 +135,57 @@ func TestListRaces_OrderBy(t *testing.T) {
 	}
 	assert.Equal(t, expected, actual)
 }
+
+func TestListRaces_Status(t *testing.T) {
+	sqldb := setupTestDB(t)
+	defer sqldb.Close()
+
+	_, err := sqldb.Exec(`
+		CREATE TABLE IF NOT EXISTS races (
+			id INTEGER PRIMARY KEY,
+			meeting_id INTEGER,
+			name TEXT,
+			number INTEGER,
+			visible INTEGER,
+			advertised_start_time DATETIME
+		)
+	`)
+	assert.NoError(t, err, "failed to create races table")
+
+	stmt, err := sqldb.Prepare(`
+		INSERT INTO races(id, meeting_id, name, number, visible, advertised_start_time)
+		VALUES (?, ?, ?, ?, ?, ?)
+	`)
+	assert.NoError(t, err)
+	defer stmt.Close()
+
+	now := time.Now()
+	past := now.Add(-1 * time.Hour).Format(time.RFC3339)
+	future := now.Add(1 * time.Hour).Format(time.RFC3339)
+
+	// Insert one race in the past and one in the future
+	_, err = stmt.Exec(301, 1, "Past Race", 1, 1, past)
+	assert.NoError(t, err, "failed to insert past race")
+
+	_, err = stmt.Exec(302, 1, "Future Race", 2, 1, future)
+	assert.NoError(t, err, "failed to insert future race")
+
+	repo := NewRacesRepo(sqldb)
+	races, err := repo.List(nil, "", "")
+	assert.NoError(t, err, "List(nil) should not error")
+
+	var foundPast, foundFuture bool
+	for _, race := range races {
+		switch race.Id {
+		case 301:
+			foundPast = true
+			assert.Equal(t, racing.RaceStatus_CLOSED, race.Status, "expected past race to be CLOSED")
+		case 302:
+			foundFuture = true
+			assert.Equal(t, racing.RaceStatus_OPEN, race.Status, "expected future race to be OPEN")
+		}
+	}
+
+	assert.True(t, foundPast, "did not find race 301 (past)")
+	assert.True(t, foundFuture, "did not find race 302 (future)")
+}
