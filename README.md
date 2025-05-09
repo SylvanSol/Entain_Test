@@ -230,27 +230,92 @@ curl -X POST http://localhost:8000/v1/get-race \
 }
 ```
 
-### Task 5: Create a sports service
-- To be completed
----
+### Task 5: Sports Service with `ListEvents` RPC
+
+* **New Service:**
+  Created a new standalone gRPC service called `sports`, with its own proto, service logic, and `main.go` file.
+
+* **Directory Structure:**
+
+  ```
+  sports/
+  ├── proto/
+  │   └── sports/
+  │       └── sports.proto
+  ├── service/
+  │   └── sports.go
+  ├── main.go
+  └── go.mod
+  ```
+
+* **Proto Definition:**
+  `sports.proto` includes:
+
+  ```proto
+  message Event {
+    int64 id = 1;
+    string name = 2;
+    string location = 3;
+    google.protobuf.Timestamp advertised_start_time = 4;
+  }
+  ```
+
+  Along with:
+
+  * `ListEventsRequest`
+  * `ListEventsResponse`
+  * `rpc ListEvents`
+
+* **Service Logic:**
+  `ListEvents` returns 3 mocked sports matches with future start times. Each includes a name, location, and advertised start time.
+
+* **gRPC Server:**
+  Sports service runs on `localhost:9100`. The API service does not forward to this (no REST setup required).
+
+* **Tests:**
+  A unit test `TestListEvents_ReturnsMockEvents` in `sports/service/sports_test.go` verifies:
+
+  * No errors on call
+  * 3 expected events returned
+  * Correct fields and ordering
+
+* **How to Run:**
+
+  ```bash
+  cd sports
+  go build && ./sports
+  ```
+
+* **How to Call (with grpcurl):**
+
+  ```bash
+  grpcurl -plaintext localhost:9100 sports.Sports/ListEvents
+  ```
+
+* **Sample Response:**
+
+  ```json
+  {
+    "events": [
+      {
+        "id": "1",
+        "name": "Red Hawks vs Blue Titans",
+        "location": "Thunder Dome",
+        "advertisedStartTime": "2025-05-09T05:37:58Z"
+      },
+      ...
+    ]
+  }
+  ```
 
 ## Testing
 
-All implemented tests live in **racing/db/queries_test.go** (Tasks 1–4 covered). Task 5 been removed for now.
+All implemented tests live in **racing/db/queries_test.go** or **sports/service/sports_test.go**
 
 Run:
 ```bash
 go test ./racing/db
 ```
-
----
-
-## Known Issues & Future Steps
-  
-- **Have not made task 5:**  
-  - Do Task 5 properly
-
----
 
 ## Contact
 
